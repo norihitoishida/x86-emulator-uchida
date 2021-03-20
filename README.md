@@ -1,6 +1,7 @@
 # x86-emulator-uchida
 - 自作エミュレータで学ぶx86アーキテクチャ(内田 上川, 2015)
 - [サポートページ](https://book.mynavi.jp/support/bookmook/x86/)
+- Win向けに書かれているのでLinux用に書き換える(Makefile等)
 
 # Table of contents
 - Chapter 1: C言語とアセンブリ言語
