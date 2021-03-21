@@ -3,49 +3,56 @@
 #include <string.h>
 #include <stdint.h>
 
-/* メモリは1MB */
+/* Memory = 1MB */
 #define MEMORY_SIZE (1024 * 1024)
 
-enum Register { EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI, REGISTERS_COUNT };
+/* General Purpose Registers */
+enum Register { 
+    EAX, // 0, Accumulator
+    ECX, // 1, Count registor
+    EDX, // 2, Data registor
+    EBX, // 3, Base registor
+
+    ESP, // 4, Stack Pointer
+    EBP, // 5, Base Pointer
+    ESI, // 6, Source Index
+    EDI, // 7, Destination Index
+    
+    REGISTERS_COUNT, // 8
+    };
+
 char* registers_name[] = {
-    "EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI", "EDI"};
+    "EAX", "ECX", "EDX", "EBX", 
+    "ESP", "EBP", "ESI", "EDI"
+    };
 
 typedef struct {
-    /* 汎用レジスタ */
-    uint32_t registers[REGISTERS_COUNT];
-
-    /* EFLAGSレジスタ */
-    uint32_t eflags;
-
-    /* メモリ(バイト列) */
-    uint8_t* memory;
-
-    /* プログラムカウンタ */
-    uint32_t eip;
+    uint32_t registers[REGISTERS_COUNT]; // 汎用レジスタ群
+    uint32_t eflags; // EFLAGSレジスタ
+    uint8_t* memory; // メモリ(バイト列)
+    uint32_t eip; // プログラムカウンタ(Instruction Pointer)
 } Emulator;
 
-/* エミュレータを作成する */
-static Emulator* create_emu(size_t size, uint32_t eip, uint32_t esp)
-{
-    Emulator* emu = malloc(sizeof(Emulator));
-    emu->memory = malloc(size);
+static Emulator* create_emu(
+    size_t size, // メモリサイズ(Byte)
+    uint32_t eip, // プログラムカウンタの値
+    uint32_t esp, // スタックポインタの値
+    ){
+        Emulator* emu = malloc(sizeof(Emulator));
+        emu->memory = malloc(size);
 
-    /* 汎用レジスタの初期値を全て0にする */
-    memset(emu->registers, 0, sizeof(emu->registers));
+        memset(emu->registers, 0, sizeof(emu->registers)); // 汎用レジスタ群初期化(全て0)
+        
+        emu->eip = eip; // プログラムカウンタ初期化
+        emu->registers[ESP] = esp; // スタックポインタ初期化
 
-    /* レジスタの初期値を指定されたものにする */
-    emu->eip = eip;
-    emu->registers[ESP] = esp;
+        return emu;
+        }
 
-    return emu;
-}
-
-/* エミュレータを破棄する */
-static void destroy_emu(Emulator* emu)
-{
+static void destroy_emu(Emulator* emu){
     free(emu->memory);
     free(emu);
-}
+    }
 
 /* 汎用レジスタとプログラムカウンタの値を標準出力に出力する */
 static void dump_registers(Emulator* emu)
@@ -108,18 +115,19 @@ void init_instructions(void)
     instructions[0xEB] = short_jump;
 }
 
-int main(int argc, char* argv[])
-{
-    FILE* binary;
-    Emulator* emu;
 
+
+int main(int argc, char* argv[]) {
     if (argc != 2) {
-        printf("usage: px86 filename\n");
+        printf("usage: px86 filename\n"); // 引数が1コでない場合はエラー
         return 1;
     }
 
-    /* EIPが0、ESPが0x7C00の状態のエミュレータを作る */
-    emu = create_emu(MEMORY_SIZE, 0x0000, 0x7c00);
+    FILE* binary; // ファイル構造体のポインタを作成
+    Emulator* emu; // Emulator構造体のポインタを作成
+
+    /* エミュレータ作成 : メモリサイズ=1MB, EIP=0, ESP=0x7C00 */
+    emu = create_emu(MEMORY_SIZE, 0x0000, 0x7c00); 
 
     binary = fopen(argv[1], "rb");
     if (binary == NULL) {
