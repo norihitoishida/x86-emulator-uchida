@@ -33,11 +33,7 @@ typedef struct {
     uint32_t eip; // プログラムカウンタ(Instruction Pointer)
 } Emulator;
 
-static Emulator* create_emu(
-    size_t size, // メモリサイズ(Byte)
-    uint32_t eip, // プログラムカウンタの値
-    uint32_t esp, // スタックポインタの値
-    ){
+static Emulator* create_emu(size_t size, uint32_t eip, uint32_t esp){
         Emulator* emu = malloc(sizeof(Emulator));
         emu->memory = malloc(size);
 
