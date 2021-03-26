@@ -122,6 +122,8 @@ int main(int argc, char* argv[]) {
     /*
     * Emulator構造体のポインタを作成
     * メモリサイズ=1MB, EIP=0, ESP=0x7C00
+    * EIP : プログラムカウンタ
+    * ESP : スタックポインタ
     */ 
     Emulator* emu; 
     emu = create_emu(MEMORY_SIZE, 0x0000, 0x7c00); 
