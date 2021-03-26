@@ -33,22 +33,23 @@ typedef struct {
     uint32_t eip; // プログラムカウンタ(Instruction Pointer)
 } Emulator;
 
-static Emulator* create_emu(size_t size, uint32_t eip, uint32_t esp){
-        Emulator* emu = malloc(sizeof(Emulator));
-        emu->memory = malloc(size);
+static Emulator* create_emu(size_t size, uint32_t eip, uint32_t esp)
+{
+    Emulator* emu = malloc(sizeof(Emulator)); // メモリ確保
+    emu->memory = malloc(size); // メモリ確保
 
-        memset(emu->registers, 0, sizeof(emu->registers)); // 汎用レジスタ群初期化(全て0)
-        
-        emu->eip = eip; // プログラムカウンタ初期化
-        emu->registers[ESP] = esp; // スタックポインタ初期化
+    memset(emu->registers, 0, sizeof(emu->registers)); // 汎用レジスタ群初期化(全て0)
+    
+    emu->eip = eip; // プログラムカウンタ初期化
+    emu->registers[ESP] = esp; // スタックポインタ初期化
+    return emu;
+}
 
-        return emu;
-        }
-
-static void destroy_emu(Emulator* emu){
+static void destroy_emu(Emulator* emu)
+{
     free(emu->memory);
     free(emu);
-    }
+}
 
 /* 汎用レジスタとプログラムカウンタの値を標準出力に出力する */
 static void dump_registers(Emulator* emu)
