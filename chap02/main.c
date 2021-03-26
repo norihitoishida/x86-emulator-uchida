@@ -117,21 +117,24 @@ int main(int argc, char* argv[]) {
     if (argc != 2) {
         printf("usage: px86 filename\n"); // 引数が1コでない場合はエラー
         return 1;
-    }
-
-    FILE* binary; // ファイル構造体のポインタを作成
-    Emulator* emu; // Emulator構造体のポインタを作成
-
-    /* エミュレータ作成 : メモリサイズ=1MB, EIP=0, ESP=0x7C00 */
+    }    
+    /*
+    * Emulator構造体のポインタを作成
+    * メモリサイズ=1MB, EIP=0, ESP=0x7C00
+    */ 
+    Emulator* emu; 
     emu = create_emu(MEMORY_SIZE, 0x0000, 0x7c00); 
 
+    /*
+    * ファイル構造体のポインタを作成
+    * 機械語ファイルを読み込む（最大512バイト） 
+    */
+    FILE* binary;
     binary = fopen(argv[1], "rb");
     if (binary == NULL) {
         printf("%sファイルが開けません\n", argv[1]);
         return 1;
     }
-
-    /* 機械語ファイルを読み込む（最大512バイト） */
     fread(emu->memory, 1, 0x200, binary);
     fclose(binary);
 
