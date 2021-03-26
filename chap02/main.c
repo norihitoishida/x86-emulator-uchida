@@ -86,6 +86,10 @@ uint32_t get_code32(Emulator* emu, int index)
     return ret;
 }
 
+/* 
+* 汎用レジスタに即値をコピーするMOV命令
+* オペランドが汎用レジスタ指定を含む
+*/
 void mov_r32_imm32(Emulator* emu)
 {
     uint8_t reg = get_code8(emu, 0) - 0xB8;
@@ -94,6 +98,10 @@ void mov_r32_imm32(Emulator* emu)
     emu->eip += 5;
 }
 
+/* 
+* 1Byteのメモリ番地を取るJMP命令
+* オペランドは1Byteの符号付き整数(-128 ~ 127)
+*/
 void short_jump(Emulator* emu)
 {
     int8_t diff = get_sign_code8(emu, 1);
@@ -115,14 +123,16 @@ void init_instructions(void)
 
 
 int main(int argc, char* argv[]) {
+    /* 引数が1コでない場合はエラー */
     if (argc != 2) {
-        printf("usage: px86 filename\n"); // 引数が1コでない場合はエラー
+        printf("usage: px86 filename\n"); 
         return 1;
-    }    
+    }
+
     /*
     * Emulator構造体を作成
     * メモリサイズ=1MB, EIP=0, ESP=0x7C00
-    * EIP : プログラムカウンタ
+    * EIP : プログラムカウンタ, 命令実行毎に確認し0ならばmainループ終了
     * ESP : スタックポインタ
     */ 
     Emulator* emu; 
@@ -130,7 +140,7 @@ int main(int argc, char* argv[]) {
 
     /*
     * ファイル構造体のポインタを作成
-    * 機械語ファイルを読み込む（最大512バイト） 
+    * 機械語ファイルを読み込む(最大512バイト)
     */
     FILE* binary;
     binary = fopen(argv[1], "rb");
