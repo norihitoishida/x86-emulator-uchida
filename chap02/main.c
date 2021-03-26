@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }    
     /*
-    * Emulator構造体のポインタを作成
+    * Emulator構造体を作成
     * メモリサイズ=1MB, EIP=0, ESP=0x7C00
     * EIP : プログラムカウンタ
     * ESP : スタックポインタ
