@@ -1,28 +1,27 @@
+# EMULATOR
 TARGET_EMU = px86
-TARGET_ASM = helloworld
-
 OBJS_EMU = main.o
-OBJS_ASM = helloworld.o
-
+SOURCE_EMU = main.c
 CC = gcc
-CFLAGS += -Wall
+CFLAGS_EMU += -Wall
 
-LD = ld
+
+# PROGRAM : .s -(nasm)-> binary
+TARGET_ASM = helloworld
 AS = nasm
 
 .PHONY: all clean
 all :
-	make $(TARGET)
+	make $(TARGET_EMU) $(TARGET_ASM)
 
-*.o : *.c Makefile
-	$(CC) $(CFLAGS) -c $<
+$(OBJS_EMU) : $(SOURCE_EMU) Makefile
+	$(CC) $(CFLAGS_EMU) -c $<
 
-$(TARGET) : $(OBJS) Makefile
-	$(CC) -o $@ $(OBJS)
+$(TARGET_EMU) : $(OBJS_EMU) Makefile
+	$(CC) -o $@ $(OBJS_EMU)
 
-
-*.bin : *.asm Makefile
-	$(AS) -o $@ $<
+$(TARGET_ASM) : *.s Makefile
+	$(AS) -f bin -o $@ $<
 
 clean :
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS_EMU) $(TARGET_EMU) $(TARGET_ASM)
